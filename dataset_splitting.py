@@ -7,7 +7,7 @@ def split_dataset(data_folder, train_ratio=0.95):
     all_files = os.listdir(data_folder)
     image_files = [file for file in all_files if (file.endswith('.jpg') or file.endswith('.png')) and file != 'train.json']
 
-    print(f"Total image files found: {len(image_files)}")  # Debugging line
+    print(f"Total image files found: {len(image_files)}")
 
     random.shuffle(image_files)
 
@@ -15,8 +15,8 @@ def split_dataset(data_folder, train_ratio=0.95):
     train_files = image_files[:num_train]
     val_files = image_files[num_train:]
 
-    print(f"Training files count: {len(train_files)}")  # Debugging line
-    print(f"Validation files count: {len(val_files)}")  # Debugging line
+    print(f"Training files count: {len(train_files)}")
+    print(f"Validation files count: {len(val_files)}")
 
     return train_files, val_files
 
@@ -52,7 +52,6 @@ def split_json(data_folder, train_files, val_files):
     with open(os.path.join(data_folder, 'data_val', 'val_data.json'), 'w') as file:
         json.dump(val_data, file, indent=4)
 
-# Replace 'your_data_folder_path' with the actual path
 data_folder_path = 'data'
 train_files, val_files = split_dataset(data_folder_path)
 create_and_move_files(data_folder_path, train_files, val_files)
