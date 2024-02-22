@@ -75,11 +75,24 @@ def detect(img_path: str) -> Dict[str, int]:
     img_tensor = preprocess_image(img).to(device)
     with torch.no_grad():
         prediction = model(img_tensor)
-    post_processed_preds = post_process(prediction[0][0] if prediction[0].numel() > 0 else torch.tensor([]))
+        predictions = prediction[0][0] if prediction[0].numel() > 0 else torch.tensor([])
+        post_processed_preds = post_process(predictions, obj_thresh=0.3, iou_thresh=0.2)
+
     object_counts = {'aspen': 0, 'birch': 0, 'hazel': 0, 'maple': 0, 'oak': 0}
-    for _, _, class_id in post_processed_preds:
-        if class_id == 0: object_counts['aspen'] += 1
-        elif class_id == 1: object_counts['birch'] += 1
+    if post_processed_preds.numel() > 0: 
+        for pred in post_processed_preds:
+            scores = pred[5:]
+            class_id = scores.argmax().item()
+            if class_id == 0:
+                object_counts['aspen'] += 1
+            elif class_id == 1:
+                object_counts['birch'] += 1
+            elif class_id == 2:
+                object_counts['hazel'] += 1
+            elif class_id == 3:
+                object_counts['maple'] += 1
+            elif class_id == 4:
+                object_counts['oak'] += 1
     return object_counts
 
 @click.command()
